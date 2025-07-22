@@ -42,15 +42,14 @@ jobs:
           fi
 
 
-          #################################
+          ####################################################
           # 处理 chartrepo 类型
+          chartrepo_done_line=`cat chartrepo.done`
+          chartrepo_next_line=$(($chartrepo_done_line + 1)) 
 
           # tmp 目录添加到 .gitignore 中了，其中下载的文件不会推送到仓库中
           mkdir tmp
           cd tmp
-
-          chartrepo_done_line=`cat chartrepo.done`
-          chartrepo_next_line=$(($chartrepo_done_line + 1)) 
 
           # 循环处理所有 chartrepo 仓库，
           for repo in `tail -n +$next_line ../chartrepo.list`
