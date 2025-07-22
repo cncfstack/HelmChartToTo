@@ -52,7 +52,7 @@ jobs:
           cd tmp
 
           # 循环处理所有 chartrepo 仓库，
-          for repo in `tail -n +$next_line ../chartrepo.list`
+          for repo in `tail -n +$chartrepo_next_line ../chartrepo.list`
           do
               echo "处理 $repo"
 
