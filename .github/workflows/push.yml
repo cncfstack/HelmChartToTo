@@ -52,8 +52,13 @@ jobs:
           # 循环处理所有 chartrepo 仓库，
           for repo in `cat ../chartrepo.list`
           do
+              echo "处理 $repo"
+              
               repo_name=`echo $repo|awk '{print $1}'`
               repo_url=`echo $repo|awk '{print $2}'`
+
+              echo "helm repo add $repo_name $repo_url"
+
               helm repo add $repo_name $repo_url
 
               # 对每个仓库中，所有的项目全部执行同步
