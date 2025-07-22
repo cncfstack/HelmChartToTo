@@ -65,11 +65,12 @@ jobs:
 
               # 对每个仓库中，所有的项目全部执行同步
               # TODO：如果仓库很大可能无法一次执行完成
-              for item in `helm search repo $repo_name |grep -v "^NAME"|awk '{print $1" "$2}'`
+              for item in `helm search repo $repo_name |grep -v "^NAME"|awk '{print $1"|"$2}'`
               do
-                  item_name=`echo $item|awk '{print $1}'`
-                  item_version=`echo $item|awk '{print $2}'`
+                  item_name=`echo $item|awk -F'|' '{print $1}'`
+                  item_version=`echo $item|awk -F'|' '{print $2}'`
                   helm pull $item_name  --version $item_version
+                  echo "helm pull $item_name  --version $item_version"
                   helm push ${item_name}-${item_version}.tgz oci://harbor.cncfstack.com/helmchart/$repo_name
               done
           done
