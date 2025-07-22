@@ -19,7 +19,7 @@ jobs:
           # wget https://get.helm.sh/helm-v3.18.4-linux-amd64.tar.gz -O /tmp/helm-v3.18.4-linux-amd64.tar.gz
           # tar xf /tmp/helm-v3.18.4-linux-amd64.tar.gz -C /tmp
 
-          # /tmp/linux-amd64/helm registry login --username=${{ secrets.HARBOR_PUSH_USERNAME }} --password=${{ secrets.HARBOR_PUSH_PASSWORD }} harbor.cncfstack.com
+          helm registry login --username=${{ secrets.HARBOR_PUSH_USERNAME }} --password=${{ secrets.HARBOR_PUSH_PASSWORD }} harbor.cncfstack.com
 
           done_line=`cat done.db`
           next_line=$(($done_line + 1)) 
