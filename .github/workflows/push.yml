@@ -50,8 +50,8 @@ jobs:
           cd tmp
 
           # 循环处理所有 chartrepo 仓库，
-          while IFS= read -r repo; do
-
+          while IFS= read -r repo
+          do
               echo "处理 $repo"
 
               repo_name=`echo $repo|awk '{print $1}'`
@@ -70,8 +70,6 @@ jobs:
                   helm pull $item_name  --version $item_version
                   helm push ${item_name}-${item_version}.tgz oci://harbor.cncfstack.com/helmchart/$repo_name
               done
-
-
           done < "../chartrepo.list"
 
 
