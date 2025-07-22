@@ -1,0 +1,53 @@
+name: Helm Chart ToTo
+on:
+  push:
+    branches: [ "main" ]
+    paths-ignore:
+      - 'done.db'
+      - 'error.log'
+  workflow_dispatch:
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - name: Run a multi-line script
+        run: |
+          set -x
+
+          wget https://get.helm.sh/helm-v3.18.4-linux-amd64.tar.gz -O /tmp/helm-v3.18.4-linux-amd64.tar.gz
+          tar xf /tmp/helm-v3.18.4-linux-amd64.tar.gz -C /tmp
+
+          /tmp/linux-amd64/helm registry login --username=${{ secrets.HARBOR_PUSH_USERNAME }} --password=${{ secrets.HARBOR_PUSH_PASSWORD }} harbor.cncfstack.com
+
+          done_line=`cat done.db`
+          next_line=$(($done_line + 1)) 
+
+          echo '' > error.log
+
+          for chart in `tail -n +$next_line helmchart.list`
+          do
+              # 获取文件最后的文件名称
+              helm_name=`basename $chart`
+              wget $chart -O /tmp/$helm_name
+              helm push /tmp/$helm_name oci://harbor.cncfstack.com/helmchart
+          done
+
+          # 处理完成后，需要更新 done.db 文件行数
+          wc -l helmchart.list|awk '{print $1}' > done.db
+
+          if [ -s error.log ];then
+             cat error.log
+          fi
+      - name: Configure Git
+        run: |
+          git config user.name "github-actions[bot]"
+          git config user.email "github-actions[bot]@users.noreply.github.com"
+      - name: Commit changes
+        run: |
+          git add .
+          git commit -m "Action Robot: sync helmchart lines [skip ci]"
+          # [skip ci] 避免触发新工作流循环
+      # 5. 推送更改
+      - name: Push changes
+        run: git push origin HEAD:${{ github.ref }}
